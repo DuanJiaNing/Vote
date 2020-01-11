@@ -31,6 +31,13 @@ public class ResultUtils {
         return rm;
     }
 
+    public static ResultModel fail(String msg) {
+        ResultModel rm = new ResultModel();
+        rm.setMsg(msg);
+        rm.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return rm;
+    }
+
     public static ResultModel fail(Throwable e) {
         e.printStackTrace();
         LoggerFactory.getLogger(ResultUtils.class).error("error when handle request", e);

@@ -6,13 +6,9 @@ server:
   port: 8079
 
 config:
-  grpc:
-    host: 127.0.0.1
-    port: 50051
+  app-id: vote
   topic:
     word-limit: 20
     notes-limit: 200
   comment:
     word-limit: 300
-  manage:
-    proposal-word-limit: 500

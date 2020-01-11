@@ -14,6 +14,7 @@
     <modules>
         <module>vote-api</module>
         <module>vote-service</module>
+        <module>vote-service-impl</module>
     </modules>
 
     <packaging>pom</packaging>
