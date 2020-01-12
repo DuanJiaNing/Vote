@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
-    public String getUserUid(String uidKey) throws UserException {
+    public UserDTO getUserUid(String uidKey) throws UserException {
         String uid = Utils.sha256(uidKey);
         UserDTO user = getUserByUid(uid);
         if (user == null) {
@@ -34,9 +34,10 @@ public class UserServiceImpl implements UserService {
             if (userDao.insert(iu) != 1) {
                 throw new UserException("Fail to insert user", new InternalException("DB"));
             }
+            user = getUserByUid(uid);
         }
 
-        return uid;
+        return user;
     }
 
     @Override

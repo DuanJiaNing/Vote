@@ -10,7 +10,7 @@ import com.duan.vote.exceptions.UserException;
  */
 public interface UserService {
 
-    String getUserUid(String uidKey) throws UserException;
+    UserDTO getUserUid(String uidKey) throws UserException;
 
     UserDTO getUserByUid(String uid);
 }

@@ -2,6 +2,7 @@ package com.duan.vote.api;
 
 
 import com.duan.vote.common.ResultModel;
+import com.duan.vote.dto.UserDTO;
 import com.duan.vote.exceptions.UserException;
 import com.duan.vote.service.UserService;
 import com.duan.vote.utils.ResultUtils;
@@ -25,13 +26,13 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResultModel login(@RequestBody String uidKey) {
+    public ResultModel<UserDTO> login(@RequestBody String uidKey) {
         if (StringUtils.isBlank(uidKey)) {
             return ResultUtils.fail("uidKey is required");
         }
 
         try {
-            String uid = userService.getUserUid(uidKey);
+            UserDTO uid = userService.getUserUid(uidKey);
             return ResultUtils.success(uid);
         } catch (UserException e) {
             return ResultUtils.fail(e);
