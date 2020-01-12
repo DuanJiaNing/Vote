@@ -2,11 +2,11 @@ package com.duan.vote.api;
 
 
 import com.duan.vote.common.ResultModel;
+import com.duan.vote.exceptions.UserException;
 import com.duan.vote.service.UserService;
 import com.duan.vote.utils.ResultUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,12 +26,16 @@ public class UserController {
 
     @PostMapping("/login")
     public ResultModel login(@RequestBody String uidKey) {
-        if (StringUtils.isBlank(uidKey)){
+        if (StringUtils.isBlank(uidKey)) {
             return ResultUtils.fail("uidKey is required");
         }
 
-        String uid = userService.getUserUid(uidKey);
-        return ResultUtils.success(uid);
+        try {
+            String uid = userService.getUserUid(uidKey);
+            return ResultUtils.success(uid);
+        } catch (UserException e) {
+            return ResultUtils.fail(e);
+        }
     }
 
 }

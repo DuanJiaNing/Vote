@@ -5,6 +5,8 @@ import com.duan.service.dto.TopicDTO;
 import com.duan.service.exceptions.TopicException;
 import com.duan.vote.common.ResultModel;
 import com.duan.vote.config.Config;
+import com.duan.vote.dto.UserDTO;
+import com.duan.vote.service.UserService;
 import com.duan.vote.utils.ResultUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
@@ -26,9 +28,16 @@ public class TopicController {
     @Autowired
     private Config config;
 
-     // TODO uid verify from db.user
+    @Reference
+    private UserService userService;
+
     @PostMapping("/add")
     public ResultModel<TopicDTO> add(@RequestBody TopicDTO topic, @RequestHeader("uid") String uid) {
+        UserDTO user = userService.getUserByUid(uid);
+        if (user == null) {
+            return ResultUtils.error("用户不存在");
+        }
+
         if (StringUtils.isBlank(topic.getTitle())) {
             return ResultUtils.error("请输入标题");
         }

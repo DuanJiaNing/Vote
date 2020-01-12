@@ -1,11 +1,17 @@
 package com.duan.vote.service.impl;
 
+import com.duan.service.exceptions.InternalException;
+import com.duan.service.util.DataConverter;
+import com.duan.vote.dao.UserDao;
+import com.duan.vote.dto.UserDTO;
+import com.duan.vote.entity.User;
+import com.duan.vote.exceptions.UserException;
 import com.duan.vote.service.UserService;
+import com.duan.vote.utils.Utils;
 import org.apache.dubbo.config.annotation.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * Created on 2020/1/11.
@@ -15,26 +21,33 @@ import java.security.NoSuchAlgorithmException;
 @Service
 public class UserServiceImpl implements UserService {
 
-    // TODO check and write into db
-    @Override
-    public String getUserUid(String uidKey) {
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-            messageDigest.update(uidKey.getBytes("UTF-8"));
-            byte[] byteBuffer = messageDigest.digest();
-            StringBuilder strHexString = new StringBuilder();
-            for (byte b : byteBuffer) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) {
-                    strHexString.append('0');
-                }
-                strHexString.append(hex);
-            }
-            return strHexString.toString();
+    @Autowired
+    private UserDao userDao;
 
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            e.printStackTrace();
+    @Override
+    public String getUserUid(String uidKey) throws UserException {
+        String uid = Utils.sha256(uidKey);
+        UserDTO user = getUserByUid(uid);
+        if (user == null) {
+            User iu = new User();
+            iu.setUid(uid);
+            if (userDao.insert(iu) != 1) {
+                throw new UserException("Fail to insert user", new InternalException("DB"));
+            }
+        }
+
+        return uid;
+    }
+
+    @Override
+    public UserDTO getUserByUid(String uid) {
+        User fe = new User();
+        fe.setUid(uid);
+        List<User> users = userDao.find(fe);
+        if (users.size() == 0) {
             return null;
         }
+
+        return DataConverter.map(users.get(0), UserDTO.class);
     }
 }
