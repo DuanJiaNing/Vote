@@ -2,6 +2,11 @@ package com.duan.vote.utils;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created on 2019/11/25.
@@ -9,6 +14,16 @@ import org.springframework.context.ApplicationContext;
  * @author DuanJiaNing
  */
 public class SpringUtil {
+
+    public static HttpServletRequest getServletRequest() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        return attributes.getRequest();
+    }
+
+    public static HttpServletResponse getServletResponse() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        return attributes.getResponse();
+    }
 
     private static ApplicationContext applicationContext = null;
 

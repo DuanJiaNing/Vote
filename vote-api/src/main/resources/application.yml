@@ -8,7 +8,7 @@ server:
 config:
   app-id: vote
   topic:
-    word-limit: 20
-    notes-limit: 200
+    word-limit: 50
+    notes-limit: 400
   comment:
-    word-limit: 300
+    word-limit: 600

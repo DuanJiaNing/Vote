@@ -5,14 +5,12 @@ import com.duan.service.dto.TopicCriteriaDTO;
 import com.duan.service.dto.TopicDTO;
 import com.duan.service.enums.TopicStatus;
 import com.duan.service.exceptions.TopicException;
-import com.duan.service.util.DataConverter;
 import com.duan.vote.common.PageModel;
 import com.duan.vote.common.ResultModel;
 import com.duan.vote.config.Config;
 import com.duan.vote.dto.UserDTO;
 import com.duan.vote.service.UserService;
 import com.duan.vote.utils.ResultUtils;
-import com.duan.vote.vo.TopicSearchCriteriaVO;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
@@ -38,30 +36,27 @@ public class TopicController {
     private UserService userService;
 
     @GetMapping("/list/my")
-    public ResultModel<PageModel<TopicDTO>> listMyTopic(@RequestBody TopicSearchCriteriaVO vo,
+    public ResultModel<PageModel<TopicDTO>> listMyTopic(@RequestParam(required = false) String keyWord,
+                                                        @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+                                                        @RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                         @RequestHeader("uid") String uid) {
         UserDTO user = userService.getUserByUid(uid);
         if (user == null) {
             return ResultUtils.error("用户不存在");
         }
 
-        TopicCriteriaDTO criteria = DataConverter.map(vo, TopicCriteriaDTO.class);
-        if (vo.getPageNum() < 0) {
-            criteria.setPageNum(0);
-        }
-        if (vo.getPageSize() <= 0) {
-            criteria.setPageSize(10);
-        }
-
+        TopicCriteriaDTO criteria = new TopicCriteriaDTO();
+        criteria.setPageNum(pageNum);
+        criteria.setPageSize(pageSize);
         criteria.setUserId(user.getUid());
         criteria.setStatus(TopicStatus.FINE.getCode());
         criteria.setAppId(config.getAppId());
-        if (StringUtils.isNotBlank(vo.getKeyWord())) {
+        if (StringUtils.isNotBlank(keyWord)) {
             try {
-                Integer topicId = Integer.valueOf(vo.getKeyWord());
+                Integer topicId = Integer.valueOf(keyWord);
                 criteria.setId(topicId);
             } catch (NumberFormatException e) {
-                criteria.setTitle(vo.getKeyWord());
+                criteria.setTitle(keyWord);
             }
         }
         PageInfo<TopicDTO> page = topicService.list(criteria);

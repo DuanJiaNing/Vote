@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -19,7 +20,7 @@ public class ResultUtils {
     public static ResultModel error(String msg) {
         ResultModel rm = new ResultModel();
         rm.setMsg(msg);
-        rm.setCode(HttpStatus.OK.value());
+        rm.setCode(HttpStatus.BAD_REQUEST.value());
         return rm;
     }
 
