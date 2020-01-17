@@ -13,4 +13,6 @@ public interface UserService {
     UserDTO getUserUid(String uidKey) throws UserException;
 
     UserDTO getUserByUid(String uid);
+
+    UserDTO getUserById(int id);
 }

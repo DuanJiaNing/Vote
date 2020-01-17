@@ -51,4 +51,14 @@ public class UserServiceImpl implements UserService {
 
         return DataConverter.map(users.get(0), UserDTO.class);
     }
+
+    @Override
+    public UserDTO getUserById(int id) {
+        User user = userDao.findById(id);
+        if (user == null) {
+            return null;
+        }
+
+        return DataConverter.map(user, UserDTO.class);
+    }
 }

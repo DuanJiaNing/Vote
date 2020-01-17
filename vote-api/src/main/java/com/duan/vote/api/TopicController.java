@@ -3,6 +3,7 @@ package com.duan.vote.api;
 import com.duan.service.TopicService;
 import com.duan.service.dto.TopicCriteriaDTO;
 import com.duan.service.dto.TopicDTO;
+import com.duan.service.dto.TopicSummaryDTO;
 import com.duan.service.enums.TopicStatus;
 import com.duan.service.exceptions.TopicException;
 import com.duan.vote.common.PageModel;
@@ -12,6 +13,7 @@ import com.duan.vote.dto.UserDTO;
 import com.duan.vote.service.UserService;
 import com.duan.vote.utils.ResultUtils;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/topic")
+@Slf4j
 public class TopicController {
 
     @Reference
@@ -35,9 +38,46 @@ public class TopicController {
     @Reference
     private UserService userService;
 
-    @GetMapping("/list/my")
-    public ResultModel<PageModel<TopicDTO>> listMyTopic(@RequestParam(required = false) String keyWord,
-                                                        @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+    @GetMapping("/list/interest")
+    public ResultModel<PageModel<TopicSummaryDTO>> listMyInterestTopic(@RequestParam(required = false) String keyWord,
+                                                                       @RequestParam(required = false) Integer keyWordType,
+                                                                       @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+                                                                       @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                                                       @RequestHeader("uid") String uid) {
+        return null;
+    }
+
+    @GetMapping("/list")
+    public ResultModel<PageModel<TopicSummaryDTO>> listAllTopic(@RequestParam(required = false) String keyWord,
+                                                                @RequestParam(required = false) Integer keyWordType,
+                                                                @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+                                                                @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        TopicCriteriaDTO criteria = new TopicCriteriaDTO();
+        switch (keyWordType) {
+            case 2:
+                UserDTO user = userService.getUserById(Integer.parseInt(keyWord));
+                if (user == null) {
+                    return ResultUtils.error("用户不存在");
+                }
+                criteria.setUserId(user.getUid());
+                break;
+            case 3:
+                criteria.setId(Integer.valueOf(keyWord));
+                break;
+            default:
+                criteria.setTitle(keyWord);
+        }
+
+        criteria.setPageNum(pageNum);
+        criteria.setPageSize(pageSize);
+        criteria.setStatus(TopicStatus.FINE.getCode());
+        criteria.setAppId(config.getAppId());
+        PageInfo<TopicSummaryDTO> page = topicService.listSummary(criteria);
+        return ResultUtils.successPaged(page);
+    }
+
+    @GetMapping("/list/my/history")
+    public ResultModel<PageModel<TopicDTO>> listMyTopic(@RequestParam(required = false, defaultValue = "1") Integer pageNum,
                                                         @RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                         @RequestHeader("uid") String uid) {
         UserDTO user = userService.getUserByUid(uid);
@@ -51,15 +91,7 @@ public class TopicController {
         criteria.setUserId(user.getUid());
         criteria.setStatus(TopicStatus.FINE.getCode());
         criteria.setAppId(config.getAppId());
-        if (StringUtils.isNotBlank(keyWord)) {
-            try {
-                Integer topicId = Integer.valueOf(keyWord);
-                criteria.setId(topicId);
-            } catch (NumberFormatException e) {
-                criteria.setTitle(keyWord);
-            }
-        }
-        PageInfo<TopicDTO> page = topicService.list(criteria);
+        PageInfo<TopicDTO> page = topicService.simpleList(criteria);
         return ResultUtils.successPaged(page);
     }
 
