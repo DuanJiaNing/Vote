@@ -1,5 +1,7 @@
 package com.duan.vote.utils;
 
+import com.github.pagehelper.PageInfo;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -10,6 +12,14 @@ import java.security.NoSuchAlgorithmException;
  * @author DuanJiaNing
  */
 public class Utils {
+
+    public static PageInfo emptyPage() {
+        return new PageInfo();
+    }
+
+    public static boolean emptyPage(PageInfo page) {
+        return page == null || page.getTotal() == 0 || page.getList() == null || page.getList().size() == 0;
+    }
 
     public static String sha256(String msg) {
         try {

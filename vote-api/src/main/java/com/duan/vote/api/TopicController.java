@@ -3,13 +3,15 @@ package com.duan.vote.api;
 import com.duan.service.TopicService;
 import com.duan.service.dto.TopicCriteriaDTO;
 import com.duan.service.dto.TopicDTO;
-import com.duan.service.dto.TopicSummaryDTO;
 import com.duan.service.enums.TopicStatus;
 import com.duan.service.exceptions.TopicException;
 import com.duan.vote.common.PageModel;
 import com.duan.vote.common.ResultModel;
 import com.duan.vote.config.Config;
+import com.duan.vote.dto.TopicStatsCriteriaDTO;
+import com.duan.vote.dto.TopicSummaryDTO;
 import com.duan.vote.dto.UserDTO;
+import com.duan.vote.service.TopicStatsService;
 import com.duan.vote.service.UserService;
 import com.duan.vote.utils.ResultUtils;
 import com.github.pagehelper.PageInfo;
@@ -32,6 +34,9 @@ public class TopicController {
     @Reference
     private TopicService topicService;
 
+    @Reference
+    private TopicStatsService topicStatsService;
+
     @Autowired
     private Config config;
 
@@ -52,27 +57,31 @@ public class TopicController {
                                                                 @RequestParam(required = false) Integer keyWordType,
                                                                 @RequestParam(required = false, defaultValue = "1") Integer pageNum,
                                                                 @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        TopicCriteriaDTO criteria = new TopicCriteriaDTO();
-        switch (keyWordType) {
-            case 2:
-                UserDTO user = userService.getUserById(Integer.parseInt(keyWord));
-                if (user == null) {
-                    return ResultUtils.error("用户不存在");
-                }
-                criteria.setUserId(user.getUid());
-                break;
-            case 3:
-                criteria.setId(Integer.valueOf(keyWord));
-                break;
-            default:
-                criteria.setTitle(keyWord);
+        TopicStatsCriteriaDTO criteria = new TopicStatsCriteriaDTO();
+        if (keyWordType != null) {
+            switch (keyWordType) {
+                case 2: // 用户 id
+                    UserDTO user = userService.getUserById(Integer.parseInt(keyWord));
+                    if (user == null) {
+                        return ResultUtils.error("用户不存在");
+                    }
+                    criteria.setUserId(user.getUid());
+                    break;
+                case 3: // 主题 id
+                    criteria.setId(Integer.valueOf(keyWord));
+                    break;
+                default:
+                    criteria.setTitle(keyWord);
+            }
+        } else if (StringUtils.isNotBlank(keyWord)) {
+            criteria.setTitle(keyWord);
         }
 
         criteria.setPageNum(pageNum);
         criteria.setPageSize(pageSize);
         criteria.setStatus(TopicStatus.FINE.getCode());
         criteria.setAppId(config.getAppId());
-        PageInfo<TopicSummaryDTO> page = topicService.listSummary(criteria);
+        PageInfo<TopicSummaryDTO> page = topicStatsService.listSummary(criteria);
         return ResultUtils.successPaged(page);
     }
 

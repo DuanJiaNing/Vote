@@ -24,6 +24,13 @@
         </where>
     </select>
 
+    <select id="findById" resultType="com.duan.vote.entity.User">
+        SELECT
+        <include refid="allFields"/>
+        FROM user
+        WHERE id = #{value}
+    </select>
+
     <insert id="insert" parameterType="com.duan.vote.entity.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user (uid)
             VALUE (#{uid})

@@ -6,7 +6,6 @@ import com.github.pagehelper.PageInfo;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -58,6 +57,10 @@ public class ResultUtils {
     }
 
     public static <T extends Serializable> ResultModel<PageModel<T>> successPaged(PageInfo<T> page) {
+        if (page == null) {
+            return success(new PageModel<>());
+        }
+
         PageModel<T> pm = new PageModel<>();
         pm.setList(page.getList());
         pm.setPageNum(page.getPageNum());
@@ -68,7 +71,4 @@ public class ResultUtils {
         return success(pm);
     }
 
-    public static boolean emptyPage(PageInfo page) {
-        return page == null || page.getTotal() == 0 || page.getList() == null || page.getList().size() == 0;
-    }
 }
