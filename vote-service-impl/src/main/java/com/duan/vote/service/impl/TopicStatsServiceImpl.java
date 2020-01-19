@@ -5,15 +5,19 @@ import com.duan.service.dto.TopicCriteriaDTO;
 import com.duan.service.dto.TopicDTO;
 import com.duan.service.util.DataConverter;
 import com.duan.vote.dao.TopicStatsDao;
+import com.duan.vote.dao.UserInterestTopicDao;
+import com.duan.vote.dto.InterestTopicStatsCriteriaDTO;
 import com.duan.vote.dto.TopicStatsCriteriaDTO;
 import com.duan.vote.dto.TopicSummaryDTO;
 import com.duan.vote.entity.TopicStats;
+import com.duan.vote.entity.UserInterestTopic;
 import com.duan.vote.service.TopicStatsService;
 import com.duan.vote.utils.Utils;
 import com.github.pagehelper.PageInfo;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +39,9 @@ public class TopicStatsServiceImpl implements TopicStatsService {
     @Autowired
     private TopicStatsDao topicStatsDao;
 
+    @Autowired
+    private UserInterestTopicDao userInterestTopicDao;
+
     @Override
     public PageInfo<TopicSummaryDTO> listSummary(TopicStatsCriteriaDTO criteria) {
         PageInfo<TopicDTO> pageInfo = topicService.simpleList(DataConverter.map(criteria, TopicCriteriaDTO.class));
@@ -42,12 +49,15 @@ public class TopicStatsServiceImpl implements TopicStatsService {
             return Utils.emptyPage();
         }
 
-        List<TopicDTO> topicList = pageInfo.getList();
-        List<Integer> ids = topicList.stream().map(TopicDTO::getId).collect(Collectors.toList());
-        List<TopicStats> dtos = topicStatsDao.findTopicStatsByIds(ids);
+        List<TopicSummaryDTO> summaryDTOS = summaryTopicStats(pageInfo.getList());
+        return Utils.newPageInfo(pageInfo, summaryDTOS);
+    }
 
+    private List<TopicSummaryDTO> summaryTopicStats(List<TopicDTO> topicList) {
+        List<Integer> ids = topicList.stream().map(TopicDTO::getId).collect(Collectors.toList());
+        List<TopicStats> topicStats = topicStatsDao.findTopicStatsByIds(ids);
         List<TopicSummaryDTO> res = new ArrayList<>(topicList.size());
-        Map<Integer, TopicStats> idMap = dtos.stream().collect(Collectors.toMap(TopicStats::getTopicId, dto -> dto));
+        Map<Integer, TopicStats> idMap = topicStats.stream().collect(Collectors.toMap(TopicStats::getTopicId, dto -> dto));
         topicList.forEach(topic -> {
             TopicSummaryDTO tsDTO = new TopicSummaryDTO();
             tsDTO.setTopicId(topic.getId());
@@ -68,13 +78,25 @@ public class TopicStatsServiceImpl implements TopicStatsService {
             res.add(tsDTO);
         });
 
-        PageInfo<TopicSummaryDTO> rpage = new PageInfo<>();
-        rpage.setList(res);
-        rpage.setPageNum(pageInfo.getPageNum());
-        rpage.setPageSize(pageInfo.getPageSize());
-        rpage.setTotal(pageInfo.getTotal());
-        rpage.setPages(pageInfo.getPages());
-        return rpage;
+        return res;
+    }
+
+    @Override
+    public PageInfo<TopicSummaryDTO> listInterest(InterestTopicStatsCriteriaDTO criteria) {
+        List<UserInterestTopic> uit = userInterestTopicDao.findByUserId(criteria.getOwnerId());
+        if (CollectionUtils.isEmpty(uit)) {
+            return Utils.emptyPage();
+        }
+
+        List<Integer> topicIds = uit.stream().map(UserInterestTopic::getTopicId).map(Integer::valueOf)
+                .collect(Collectors.toList());
+        PageInfo<TopicDTO> pageInfo = topicService.simpleList(DataConverter.map(criteria, TopicCriteriaDTO.class), topicIds);
+        if (Utils.emptyPage(pageInfo)) {
+            return Utils.emptyPage();
+        }
+
+        List<TopicSummaryDTO> summaryDTOS = summaryTopicStats(pageInfo.getList());
+        return Utils.newPageInfo(pageInfo, summaryDTOS);
     }
 
 }

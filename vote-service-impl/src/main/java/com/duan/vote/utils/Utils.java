@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * Created on 2020/1/11.
@@ -12,6 +13,16 @@ import java.security.NoSuchAlgorithmException;
  * @author DuanJiaNing
  */
 public class Utils {
+
+    public static <E> PageInfo<E> newPageInfo(PageInfo pageInfo, List<E> list) {
+        PageInfo<E> rpage = new PageInfo<>();
+        rpage.setList(list);
+        rpage.setPageNum(pageInfo.getPageNum());
+        rpage.setPageSize(pageInfo.getPageSize());
+        rpage.setTotal(pageInfo.getTotal());
+        rpage.setPages(pageInfo.getPages());
+        return rpage;
+    }
 
     public static PageInfo emptyPage() {
         return new PageInfo();

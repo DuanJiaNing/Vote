@@ -2,9 +2,9 @@ package com.duan.vote.utils;
 
 import com.duan.vote.common.PageModel;
 import com.duan.vote.common.ResultModel;
+import com.duan.vote.exceptions.CheckedException;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 
 import java.io.Serializable;
 
@@ -15,26 +15,35 @@ import java.io.Serializable;
  */
 public class ResultUtils {
 
+    private static final int OK = 0;
     // user understandable
-    public static ResultModel error(String msg) {
+    private static final int CHECKED_ERROR = 1;
+    // user can not understand
+    private static final int INTERNAL_ERROR = 2;
+
+    public static ResultModel processException(Throwable err) {
+        return err instanceof CheckedException ? ResultUtils.checked((CheckedException) err)
+                : ResultUtils.fail(err);
+    }
+
+    public static ResultModel checked(String msg) {
         ResultModel rm = new ResultModel();
         rm.setMsg(msg);
-        rm.setCode(HttpStatus.BAD_REQUEST.value());
+        rm.setCode(CHECKED_ERROR);
         return rm;
     }
 
-    // user can not understand, dev can
-    public static ResultModel fail(String msg, HttpStatus httpCode) {
+    public static ResultModel checked(CheckedException err) {
         ResultModel rm = new ResultModel();
-        rm.setMsg(msg);
-        rm.setCode(httpCode.value());
+        rm.setMsg(err.getMessage());
+        rm.setCode(CHECKED_ERROR);
         return rm;
     }
 
     public static ResultModel fail(String msg) {
         ResultModel rm = new ResultModel();
         rm.setMsg(msg);
-        rm.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        rm.setCode(INTERNAL_ERROR);
         return rm;
     }
 
@@ -44,7 +53,7 @@ public class ResultUtils {
 
         ResultModel rm = new ResultModel();
         rm.setMsg(e.getMessage());
-        rm.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        rm.setCode(INTERNAL_ERROR);
         return rm;
     }
 
@@ -52,7 +61,7 @@ public class ResultUtils {
         ResultModel<T> rm = new ResultModel<T>();
         rm.setMsg("success");
         rm.setData(data);
-        rm.setCode(HttpStatus.OK.value());
+        rm.setCode(OK);
         return rm;
     }
 

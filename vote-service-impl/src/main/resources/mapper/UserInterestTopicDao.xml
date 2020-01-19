@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.duan.vote.dao.UserInterestTopicDao">
+
+    <sql id="allFields">id, user_id, topic_id, insert_time</sql>
+
+    <select id="findByUserId" resultType="com.duan.vote.entity.UserInterestTopic">
+        SELECT
+        <include refid="allFields"/>
+        FROM user_interest_topic
+        WHERE user_id = #{value}
+    </select>
+
+</mapper>
