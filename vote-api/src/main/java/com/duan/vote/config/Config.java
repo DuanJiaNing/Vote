@@ -17,6 +17,12 @@ public class Config {
     private String appId;
     private Topic topic;
     private Comment comment;
+    private Search search;
+
+    @Data
+    public static class Search {
+        private int wordLimit;
+    }
 
     @Data
     public static class Topic {

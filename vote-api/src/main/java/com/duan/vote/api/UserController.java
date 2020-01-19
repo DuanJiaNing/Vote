@@ -3,12 +3,11 @@ package com.duan.vote.api;
 
 import com.duan.vote.common.ResultModel;
 import com.duan.vote.dto.UserDTO;
-import com.duan.vote.exceptions.UserException;
+import com.duan.vote.exceptions.ServiceException;
 import com.duan.vote.service.UserService;
 import com.duan.vote.utils.ResultUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.Reference;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +34,7 @@ public class UserController {
         try {
             UserDTO uid = userService.getUserUid(uidKey);
             return ResultUtils.success(uid);
-        } catch (UserException e) {
+        } catch (ServiceException e) {
             return ResultUtils.fail(e);
         }
     }

@@ -7,6 +7,8 @@ server:
 
 config:
   app-id: vote
+  search:
+    word-limit: 20
   topic:
     word-limit: 50
     notes-limit: 400

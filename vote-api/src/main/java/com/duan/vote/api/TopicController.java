@@ -13,7 +13,7 @@ import com.duan.vote.dto.TopicStatsCriteriaDTO;
 import com.duan.vote.dto.TopicSummaryDTO;
 import com.duan.vote.dto.UserDTO;
 import com.duan.vote.exceptions.CheckedException;
-import com.duan.vote.exceptions.UserException;
+import com.duan.vote.exceptions.ServiceException;
 import com.duan.vote.service.TopicStatsService;
 import com.duan.vote.service.UserService;
 import com.duan.vote.utils.ResultUtils;
@@ -80,7 +80,7 @@ public class TopicController {
                         criteria.setUserId(user.getUid());
                         break;
                     } else {
-                        throw new UserException("not allowed to search by userId");
+                        throw new ServiceException("not allowed to search by userId");
                     }
                 case 3: // 主题 id
                     criteria.setId(Integer.valueOf(keyWord));
