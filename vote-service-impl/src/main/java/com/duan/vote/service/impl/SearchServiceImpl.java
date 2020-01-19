@@ -12,6 +12,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -37,9 +38,12 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public SearchHistoryDTO add(String content, Integer userId) throws ServiceException {
-        UserSearchHistory history = userSearchHistoryDao.findByContent(content);
-        if (history == null) {
-            history = new UserSearchHistory();
+        UserSearchHistory fuh = new UserSearchHistory();
+        fuh.setUserId(userId);
+        fuh.setContent(content);
+        List<UserSearchHistory> histories = userSearchHistoryDao.find(fuh);
+        if (CollectionUtils.isEmpty(histories)) {
+            UserSearchHistory history = new UserSearchHistory();
             history.setCount(1);
             history.setUserId(userId);
             history.setContent(content);
@@ -49,6 +53,7 @@ public class SearchServiceImpl implements SearchService {
             return newSearchHistoryDTO(content, 1);
         }
 
+        UserSearchHistory history = histories.get(0);
         int newCount = history.getCount() + 1;
         history.setCount(newCount);
         if (userSearchHistoryDao.update(history) != 1) {

@@ -28,13 +28,7 @@
                 AND insert_time=#{insertTime}
             </if>
         </where>
-        ORDER BY insert_time desc
-    </select>
-
-    <select id="findByContent" resultType="com.duan.vote.entity.UserSearchHistory">
-        SELECT
-        <include refid="allFields"/>
-        FROM user_search_history WHERE content=#{value}
+        ORDER BY `count` desc
     </select>
 
     <insert id="insert" parameterType="com.duan.vote.entity.UserSearchHistory" useGeneratedKeys="true" keyProperty="id">

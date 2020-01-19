@@ -11,6 +11,4 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserSearchHistoryDao extends BaseDao<UserSearchHistory> {
-
-    UserSearchHistory findByContent(String content);
 }
