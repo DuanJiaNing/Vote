@@ -73,6 +73,7 @@ public class TopicStatsServiceImpl implements TopicStatsService {
             }
             tsDTO.setInsertTime(topic.getInsertTime());
             tsDTO.setTitle(topic.getTitle());
+            tsDTO.setNotes(topic.getNotes());
             tsDTO.setStatus(topic.getStatus());
 
             res.add(tsDTO);

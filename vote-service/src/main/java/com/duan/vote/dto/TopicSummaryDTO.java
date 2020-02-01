@@ -18,6 +18,7 @@ public class TopicSummaryDTO implements Serializable {
     private Timestamp insertTime;
     private Integer status;
     private String title;
+    private String notes;
 
     private Integer agree;
     private Integer disagree;
