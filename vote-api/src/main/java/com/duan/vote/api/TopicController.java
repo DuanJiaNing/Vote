@@ -46,6 +46,16 @@ public class TopicController {
     @Reference
     private UserService userService;
 
+    @GetMapping("/{id}")
+    public ResultModel<TopicSummaryDTO> get(@PathVariable Integer id) {
+        TopicSummaryDTO summary = topicStatsService.getSummary(id);
+        if (summary == null) {
+            return ResultUtils.checked("主题不存在");
+        }
+
+        return ResultUtils.success(summary);
+    }
+
     @GetMapping("/list/my/interest")
     public ResultModel<PageModel<TopicSummaryDTO>> listMyInterestTopic(@RequestParam(required = false) String keyWord,
                                                                        @RequestParam(required = false) Integer keyWordType,

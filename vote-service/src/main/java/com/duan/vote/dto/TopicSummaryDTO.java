@@ -20,8 +20,7 @@ public class TopicSummaryDTO implements Serializable {
     private String title;
     private String notes;
 
-    private Integer agree;
-    private Integer disagree;
-
+    private Double vote;
+    private Integer voteCount;
     private Integer interestUserCount;
 }

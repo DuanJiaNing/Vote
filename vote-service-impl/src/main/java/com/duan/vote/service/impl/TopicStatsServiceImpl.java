@@ -9,7 +9,6 @@ import com.duan.vote.dao.UserInterestTopicDao;
 import com.duan.vote.dto.InterestTopicStatsCriteriaDTO;
 import com.duan.vote.dto.TopicStatsCriteriaDTO;
 import com.duan.vote.dto.TopicSummaryDTO;
-import com.duan.vote.entity.TopicStats;
 import com.duan.vote.entity.UserInterestTopic;
 import com.duan.vote.service.TopicStatsService;
 import com.duan.vote.utils.Utils;
@@ -21,8 +20,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -55,22 +53,20 @@ public class TopicStatsServiceImpl implements TopicStatsService {
 
     private List<TopicSummaryDTO> summaryTopicStats(List<TopicDTO> topicList) {
         List<Integer> ids = topicList.stream().map(TopicDTO::getId).collect(Collectors.toList());
-        List<TopicStats> topicStats = topicStatsDao.findTopicStatsByIds(ids);
+//        List<TopicStats> topicStats = topicStatsDao.findTopicStatsByIds(ids);
         List<TopicSummaryDTO> res = new ArrayList<>(topicList.size());
-        Map<Integer, TopicStats> idMap = topicStats.stream().collect(Collectors.toMap(TopicStats::getTopicId, dto -> dto));
+//        Map<Integer, TopicStats> idMap = topicStats.stream().collect(Collectors.toMap(TopicStats::getTopicId, dto -> dto));
+        Random random = new Random();
         topicList.forEach(topic -> {
             TopicSummaryDTO tsDTO = new TopicSummaryDTO();
             tsDTO.setTopicId(topic.getId());
-            TopicStats ts = idMap.get(topic.getId());
-            if (ts != null) {
-                tsDTO.setAgree(Optional.ofNullable(ts.getAgree()).orElse(0));
-                tsDTO.setDisagree(Optional.ofNullable(ts.getDisagree()).map(da -> -da).orElse(0));
-                tsDTO.setInterestUserCount(Optional.ofNullable(ts.getInterestUserCount()).orElse(0));
-            } else {
-                tsDTO.setAgree(0);
-                tsDTO.setDisagree(0);
-                tsDTO.setInterestUserCount(0);
-            }
+//            TopicStats ts = idMap.get(topic.getId());
+//            tsDTO.setAgree(0);
+//            tsDTO.setDisagree(0);
+            // TODO
+            tsDTO.setVoteCount(random.nextInt(100));
+            tsDTO.setVote(random.nextDouble() * (random.nextBoolean() ? 1 : -1));
+            tsDTO.setInterestUserCount(random.nextInt(1000));
             tsDTO.setInsertTime(topic.getInsertTime());
             tsDTO.setTitle(topic.getTitle());
             tsDTO.setNotes(topic.getNotes());
@@ -98,6 +94,25 @@ public class TopicStatsServiceImpl implements TopicStatsService {
 
         List<TopicSummaryDTO> summaryDTOS = summaryTopicStats(pageInfo.getList());
         return Utils.newPageInfo(pageInfo, summaryDTOS);
+    }
+
+    @Override
+    public TopicSummaryDTO getSummary(Integer id) {
+        TopicDTO topic = topicService.get(id);
+        if (topic == null) {
+            return null;
+        }
+
+        Random random = new Random();
+        TopicSummaryDTO tsDTO = new TopicSummaryDTO();
+        tsDTO.setVoteCount(random.nextInt(100));
+        tsDTO.setVote(random.nextDouble() * (random.nextBoolean() ? 1 : -1));
+        tsDTO.setInterestUserCount(random.nextInt(1000));
+        tsDTO.setInsertTime(topic.getInsertTime());
+        tsDTO.setTitle(topic.getTitle());
+        tsDTO.setNotes(topic.getNotes());
+        tsDTO.setStatus(topic.getStatus());
+        return tsDTO;
     }
 
 }
