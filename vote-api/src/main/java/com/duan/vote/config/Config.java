@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 @Data
 public class Config {
 
-    private String appId;
     private Topic topic;
     private Comment comment;
     private Search search;

@@ -16,7 +16,6 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1211656111779402143L;
     private Integer id;
     private String uid;
-
     private Timestamp insertTime;
 
 }

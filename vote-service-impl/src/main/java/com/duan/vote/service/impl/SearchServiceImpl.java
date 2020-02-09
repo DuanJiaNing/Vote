@@ -2,10 +2,10 @@ package com.duan.vote.service.impl;
 
 import com.duan.service.exceptions.InternalException;
 import com.duan.service.util.DataConverter;
-import com.duan.vote.dao.UserSearchHistoryDao;
+import com.duan.vote.dao.SearchHistoryDao;
 import com.duan.vote.dto.SearchHistoryCriteriaDTO;
 import com.duan.vote.dto.SearchHistoryDTO;
-import com.duan.vote.entity.UserSearchHistory;
+import com.duan.vote.entity.SearchHistory;
 import com.duan.vote.exceptions.ServiceException;
 import com.duan.vote.service.SearchService;
 import com.github.pagehelper.PageHelper;
@@ -25,38 +25,38 @@ import java.util.List;
 public class SearchServiceImpl implements SearchService {
 
     @Autowired
-    private UserSearchHistoryDao userSearchHistoryDao;
+    private SearchHistoryDao searchHistoryDao;
 
     @Override
     public PageInfo<SearchHistoryDTO> list(SearchHistoryCriteriaDTO criteria) {
         PageHelper.startPage(criteria.getPageNum(), criteria.getPageSize());
-        UserSearchHistory ush = new UserSearchHistory();
+        SearchHistory ush = new SearchHistory();
         ush.setUserId(criteria.getUserId());
-        List<UserSearchHistory> pageList = userSearchHistoryDao.find(ush);
+        List<SearchHistory> pageList = searchHistoryDao.find(ush);
         return DataConverter.page(pageList, SearchHistoryDTO.class);
     }
 
     @Override
     public SearchHistoryDTO add(String content, Integer userId) throws ServiceException {
-        UserSearchHistory fuh = new UserSearchHistory();
+        SearchHistory fuh = new SearchHistory();
         fuh.setUserId(userId);
         fuh.setContent(content);
-        List<UserSearchHistory> histories = userSearchHistoryDao.find(fuh);
+        List<SearchHistory> histories = searchHistoryDao.find(fuh);
         if (CollectionUtils.isEmpty(histories)) {
-            UserSearchHistory history = new UserSearchHistory();
+            SearchHistory history = new SearchHistory();
             history.setCount(1);
             history.setUserId(userId);
             history.setContent(content);
-            if (userSearchHistoryDao.insert(history) != 1) {
+            if (searchHistoryDao.insert(history) != 1) {
                 throw new ServiceException("Fail to insert user search history", new InternalException("DB"));
             }
             return newSearchHistoryDTO(content, 1);
         }
 
-        UserSearchHistory history = histories.get(0);
+        SearchHistory history = histories.get(0);
         int newCount = history.getCount() + 1;
         history.setCount(newCount);
-        if (userSearchHistoryDao.update(history) != 1) {
+        if (searchHistoryDao.update(history) != 1) {
             throw new ServiceException("Fail to increment user search history count", new InternalException("DB"));
         }
 

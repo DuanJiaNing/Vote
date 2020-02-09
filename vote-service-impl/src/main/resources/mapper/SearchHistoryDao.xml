@@ -2,15 +2,15 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.duan.vote.dao.UserSearchHistoryDao">
+<mapper namespace="com.duan.vote.dao.SearchHistoryDao">
 
     <sql id="allFields">id, user_id, `count`, content, insert_time</sql>
 
-    <select id="find" resultType="com.duan.vote.entity.UserSearchHistory"
-            parameterType="com.duan.vote.entity.UserSearchHistory">
+    <select id="find" resultType="com.duan.vote.entity.SearchHistory"
+            parameterType="com.duan.vote.entity.SearchHistory">
         SELECT
         <include refid="allFields"/>
-        FROM user_search_history
+        FROM search_history
         <where>
             <if test="id != null">
                 AND id=#{id}
@@ -31,13 +31,13 @@
         ORDER BY `count` desc
     </select>
 
-    <insert id="insert" parameterType="com.duan.vote.entity.UserSearchHistory" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO user_search_history (content, `count`, user_id)
+    <insert id="insert" parameterType="com.duan.vote.entity.SearchHistory" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO search_history (content, `count`, user_id)
             VALUE (#{content}, #{count}, #{userId})
     </insert>
 
-    <update id="update" parameterType="com.duan.vote.entity.UserSearchHistory">
-        UPDATE user_search_history
+    <update id="update" parameterType="com.duan.vote.entity.SearchHistory">
+        UPDATE search_history
         <set>
             <if test="content != null and content.length() > 0">
                 content=#{content},

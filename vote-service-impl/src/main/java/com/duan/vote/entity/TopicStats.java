@@ -14,8 +14,7 @@ public class TopicStats implements Serializable {
 
     private static final long serialVersionUID = 5079232498533095887L;
     private Integer topicId;
-    private Integer agree;
-    private Integer disagree;
+    private Integer voteCount;
     private Integer interestUserCount;
 
 }

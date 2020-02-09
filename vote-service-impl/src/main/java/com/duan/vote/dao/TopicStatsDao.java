@@ -1,6 +1,6 @@
 package com.duan.vote.dao;
 
-import com.duan.vote.entity.TopicStats;
+import com.duan.vote.dto.TopicSummaryDTO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +14,9 @@ import java.util.List;
 @Repository
 public interface TopicStatsDao {
 
-    List<TopicStats> findTopicStatsByIds(@Param("ids") List<Integer> ids);
+    List<TopicSummaryDTO> simpleStats(@Param("title") String title,@Param("userId") Integer userId);
 
+    List<TopicSummaryDTO> listInterestStats(Integer userId);
+
+    TopicSummaryDTO getStats(Integer topicId);
 }

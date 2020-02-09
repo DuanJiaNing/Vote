@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.duan.vote.dao.TopicDao">
+
+    <sql id="allFields">id, user_id, title, notes, insert_time</sql>
+
+    <select id="findAll" resultType="com.duan.vote.entity.Topic">
+        SELECT
+        <include refid="allFields"/>
+        FROM topic
+    </select>
+
+    <select id="find" resultType="com.duan.vote.entity.Topic"
+            parameterType="com.duan.vote.entity.Topic">
+        SELECT
+        <include refid="allFields"/>
+        FROM topic
+        <where>
+            <if test="id != null">
+                AND id=#{id}
+            </if>
+            <if test="userId != null">
+                AND user_id=#{userId}
+            </if>
+            <if test="title != null and title.length() > 0">
+                AND title like '%${title}%'
+            </if>
+            <if test="notes != null">
+                AND notes=#{notes}
+            </if>
+            <if test="insertTime != null">
+                AND insert_time=#{insertTime}
+            </if>
+        </where>
+        ORDER BY insert_time desc
+    </select>
+
+    <select id="findByTitle" resultType="com.duan.vote.entity.Topic">
+        SELECT
+        <include refid="allFields"/>
+        FROM topic WHERE `title`=#{value}
+    </select>
+
+    <select id="findWithIds" resultType="com.duan.vote.entity.Topic">
+        SELECT
+        <include refid="allFields"/>
+        FROM topic
+        <where>
+            <if test="topic.id != null">
+                AND id=#{topic.id}
+            </if>
+            <if test="topic.userId != null">
+                AND user_id=#{topic.userId}
+            </if>
+            <if test="topic.title != null and topic.title.length() > 0">
+                AND title like '%${topic.title}%'
+            </if>
+            <if test="topic.notes != null">
+                AND notes=#{topic.notes}
+            </if>
+            <if test="topic.insertTime != null">
+                AND insert_time=#{topic.insertTime}
+            </if>
+            <if test="ids != null and ids.size > 0">
+                AND id IN
+                <foreach collection="ids"
+                         item="id"
+                         open="("
+                         separator=","
+                         close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY insert_time desc
+    </select>
+
+    <select id="findById" resultType="com.duan.vote.entity.Topic">
+        SELECT
+        <include refid="allFields"/>
+        FROM topic
+        WHERE id = #{value}
+    </select>
+
+    <insert id="insert" parameterType="com.duan.vote.entity.Topic" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO topic (user_id, title, notes)
+            VALUE (#{userId}, #{title}, #{notes})
+    </insert>
+
+</mapper>

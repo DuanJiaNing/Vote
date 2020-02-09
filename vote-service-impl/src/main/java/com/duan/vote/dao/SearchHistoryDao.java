@@ -1,7 +1,7 @@
 package com.duan.vote.dao;
 
 import com.duan.service.dao.BaseDao;
-import com.duan.vote.entity.UserSearchHistory;
+import com.duan.vote.entity.SearchHistory;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  * @author DuanJiaNing
  */
 @Repository
-public interface UserSearchHistoryDao extends BaseDao<UserSearchHistory> {
+public interface SearchHistoryDao extends BaseDao<SearchHistory> {
 }

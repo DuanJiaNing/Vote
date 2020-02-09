@@ -4,26 +4,65 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.duan.vote.dao.TopicStatsDao">
 
-    <select id="findTopicStatsByIds" resultType="com.duan.vote.entity.TopicStats">
-        SELECT vc.topic_id, dvc.disagree, avc.agree, it.interestUserCount
+    <select id="simpleStats" resultType="com.duan.vote.dto.TopicSummaryDTO">
+        SELECT t.id AS topic_id, t.title, t.notes, t.insert_time, iuc.interest_user_count, cvc.vote_count
         FROM (
-        (SELECT uvc.topic_id AS topic_id FROM user_vote_comment uvc WHERE uvc.topic_id IN
-        <foreach collection="ids"
-                 item="id"
-                 open="("
-                 separator=","
-                 close=")">
-            #{id}
-        </foreach>
-        GROUP BY uvc.topic_id) vc
-        LEFT JOIN
-        (SELECT duvc.topic_id AS topic_id, SUM(duvc.vote) AS disagree FROM user_vote_comment duvc WHERE duvc.vote &lt; 0
-        GROUP BY duvc.topic_id) dvc ON vc.topic_id = dvc.topic_id
-        LEFT JOIN
-        (SELECT auvc.topic_id AS topic_id, SUM(auvc.vote) AS agree FROM user_vote_comment auvc WHERE auvc.vote &gt; 0
-        GROUP BY auvc.topic_id) avc ON vc.topic_id = avc.topic_id
-        LEFT JOIN
-        (SELECT uit.topic_id AS topic_id, COUNT(uit.user_id) AS interestUserCount FROM user_interest_topic uit GROUP BY
-        uit.topic_id) it ON vc.topic_id = it.topic_id)
+        SELECT id, title, notes, insert_time
+        FROM topic
+        <where>
+            <if test="title != null and title.length() > 0">
+                AND title LIKE '%${title}%'
+            </if>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+        </where>
+        ) t
+        LEFT JOIN (
+        SELECT topic_id, COUNT(user_id) AS interest_user_count
+        FROM user_interest_topic
+        GROUP BY topic_id) iuc
+        ON iuc.topic_id = t.id
+        LEFT JOIN (
+        SELECT c.topic_id, SUM(cv.vote_count) AS vote_count
+        FROM (
+        SELECT id, topic_id
+        FROM comment) c
+        LEFT JOIN(
+        SELECT COUNT(vote) vote_count, comment_id
+        FROM comment_vote
+        GROUP BY comment_id) cv
+        ON c.id = cv.comment_id
+        GROUP BY topic_id) cvc
+        ON cvc.topic_id = t.id
+    </select>
+
+    <select id="listInterestStats" resultType="com.duan.vote.dto.TopicSummaryDTO">
+# TODO
+    </select>
+
+    <select id="getStats" resultType="com.duan.vote.dto.TopicSummaryDTO">
+        SELECT t.id AS topic_id, t.title, t.notes, t.insert_time, iuc.interest_user_count, cvc.vote_count
+        FROM (
+                 SELECT id, title, notes, insert_time
+                 FROM topic
+                 WHERE id = #{topicId}) t
+                 LEFT JOIN (
+            SELECT topic_id, COUNT(user_id) AS interest_user_count
+            FROM user_interest_topic
+            GROUP BY topic_id) iuc
+                           ON iuc.topic_id = t.id
+                 LEFT JOIN (
+            SELECT c.topic_id, SUM(cv.vote_count) AS vote_count
+            FROM (
+                     SELECT id, topic_id
+                     FROM comment) c
+                     LEFT JOIN(
+                SELECT COUNT(vote) vote_count, comment_id
+                FROM comment_vote
+                GROUP BY comment_id) cv
+                              ON c.id = cv.comment_id
+            GROUP BY topic_id) cvc
+                           ON cvc.topic_id = t.id
     </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.duan.vote.utils;
 
+import com.duan.service.dto.PageCondition;
 import com.github.pagehelper.PageInfo;
 
 import java.io.UnsupportedEncodingException;
@@ -13,6 +14,25 @@ import java.util.List;
  * @author DuanJiaNing
  */
 public class Utils {
+
+    public static final int default_page_size = 10;
+    public static final int default_page_num = 0;
+
+    public static <E extends PageCondition> E checkPageCondition(E pageCondition) {
+        if (pageCondition == null) {
+            return null;
+        }
+
+        if (pageCondition.getPageNum() < 0) {
+            pageCondition.setPageNum(default_page_num);
+        }
+
+        if (pageCondition.getPageSize() <= 0) {
+            pageCondition.setPageSize(default_page_size);
+        }
+
+        return pageCondition;
+    }
 
     public static <E> PageInfo<E> newPageInfo(PageInfo pageInfo, List<E> list) {
         PageInfo<E> rpage = new PageInfo<>();

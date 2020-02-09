@@ -24,17 +24,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.duan.service</groupId>
-            <artifactId>topic</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.duan.service</groupId>
-            <artifactId>comment</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.duan.vote</groupId>
             <artifactId>vote-service</artifactId>
             <version>1.0-SNAPSHOT</version>
