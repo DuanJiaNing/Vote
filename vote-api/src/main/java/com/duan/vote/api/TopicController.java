@@ -115,7 +115,7 @@ public class TopicController {
         return criteria;
     }
 
-    @PostMapping()
+    @PostMapping
     public ResultModel<TopicDTO> add(@RequestBody TopicDTO topic, @RequestHeader("uid") String uid) {
         UserDTO user = userService.getUserByUid(uid);
         if (user == null) {

@@ -60,7 +60,9 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public PageInfo<TopicDTO> simpleList(TopicCriteriaDTO criteria) {
         criteria = Utils.checkPageCondition(criteria);
-        Topic st = DataConverter.map(criteria, Topic.class);
+        Topic st = new Topic();
+        st.setUserId(criteria.getUserId());
+        st.setTitle(criteria.getKeyword());
         PageHelper.startPage(criteria.getPageNum(), criteria.getPageSize());
         List<Topic> pageList = topicDao.find(st);
         return DataConverter.page(pageList, TopicDTO.class);

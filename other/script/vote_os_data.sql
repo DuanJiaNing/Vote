@@ -27,12 +27,14 @@ CREATE TABLE IF NOT EXISTS `comment` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
--- Dumping data for table vote_os.comment: ~0 rows (approximately)
+-- Dumping data for table vote_os.comment: ~3 rows (approximately)
 /*!40000 ALTER TABLE `comment` DISABLE KEYS */;
 INSERT INTO `comment` (`id`, `user_id`, `topic_id`, `content`, `vote`, `insert_time`) VALUES
-	(1, 2, 13, '可以的', 1, '2020-02-09 15:55:14'),
-	(2, 3, 13, 'no', -1, '2020-02-09 15:56:57'),
-	(3, 4, 13, 'yes', 1, '2020-02-09 15:57:55');
+                                                                                          (1, 2, 13, '可以的', 1, '2020-02-09 15:55:14'),
+                                                                                          (2, 3, 13, 'no', -1, '2020-02-09 15:56:57'),
+                                                                                          (3, 4, 13, 'yes', 1, '2020-02-09 15:57:55'),
+                                                                                          (4, 2, 14, 'y', 1, '2020-02-09 17:00:03'),
+                                                                                          (5, 3, 14, 'n', -1, '2020-02-09 17:00:20');
 /*!40000 ALTER TABLE `comment` ENABLE KEYS */;
 
 -- Dumping structure for table vote_os.comment_vote
@@ -45,15 +47,18 @@ CREATE TABLE IF NOT EXISTS `comment_vote` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Dumping data for table vote_os.comment_vote: ~0 rows (approximately)
+-- Dumping data for table vote_os.comment_vote: ~6 rows (approximately)
 /*!40000 ALTER TABLE `comment_vote` DISABLE KEYS */;
 INSERT INTO `comment_vote` (`id`, `user_id`, `comment_id`, `vote`, `insert_time`) VALUES
-	(1, 3, 1, 1, '2020-02-09 15:58:38'),
-	(2, 2, 1, 1, '2020-02-09 15:59:01'),
-	(3, 4, 2, 1, '2020-02-09 15:59:35'),
-	(4, 4, 3, 1, '2020-02-09 15:59:56'),
-	(5, 2, 3, -1, '2020-02-09 16:00:08'),
-	(6, 5, 3, 1, '2020-02-09 16:00:24');
+                                                                                      (1, 3, 1, 1, '2020-02-09 15:58:38'),
+                                                                                      (2, 2, 1, 1, '2020-02-09 15:59:01'),
+                                                                                      (3, 4, 2, 1, '2020-02-09 15:59:35'),
+                                                                                      (4, 4, 3, 1, '2020-02-09 15:59:56'),
+                                                                                      (5, 2, 3, -1, '2020-02-09 16:00:08'),
+                                                                                      (6, 5, 3, 1, '2020-02-09 16:00:24'),
+                                                                                      (7, 2, 4, 1, '2020-02-09 17:01:18'),
+                                                                                      (8, 4, 5, -1, '2020-02-09 17:01:32'),
+                                                                                      (9, 4, 4, 1, '2020-02-09 17:02:23');
 /*!40000 ALTER TABLE `comment_vote` ENABLE KEYS */;
 
 -- Dumping structure for table vote_os.search_history
@@ -117,7 +122,7 @@ CREATE TABLE IF NOT EXISTS `user_interest_topic` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Dumping data for table vote_os.user_interest_topic: ~0 rows (approximately)
+-- Dumping data for table vote_os.user_interest_topic: ~6 rows (approximately)
 /*!40000 ALTER TABLE `user_interest_topic` DISABLE KEYS */;
 INSERT INTO `user_interest_topic` (`id`, `user_id`, `topic_id`, `insert_time`) VALUES
 	(1, 1, 13, '2020-02-09 16:00:47'),
