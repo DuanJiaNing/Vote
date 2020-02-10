@@ -5,6 +5,7 @@ import com.duan.service.util.DataConverter;
 import com.duan.vote.dao.TopicDao;
 import com.duan.vote.dto.TopicCriteriaDTO;
 import com.duan.vote.dto.TopicDTO;
+import com.duan.vote.dto.TopicSummaryDTO;
 import com.duan.vote.entity.Topic;
 import com.duan.vote.exceptions.ServiceException;
 import com.duan.vote.service.TopicService;
@@ -29,6 +30,27 @@ public class TopicServiceImpl implements TopicService {
     private TopicDao topicDao;
 
     @Override
+    public PageInfo<TopicSummaryDTO> listSummary(TopicCriteriaDTO criteria) {
+        criteria = Utils.checkPageCondition(criteria);
+        PageHelper.startPage(criteria.getPageNum(), criteria.getPageSize());
+        List<TopicSummaryDTO> pageList = topicDao.summary(criteria.getKeyword(), criteria.getUserId());
+        return DataConverter.page(pageList, TopicSummaryDTO.class);
+    }
+
+    @Override
+    public PageInfo<TopicSummaryDTO> listInterest(TopicCriteriaDTO criteria) {
+        criteria = Utils.checkPageCondition(criteria);
+        PageHelper.startPage(criteria.getPageNum(), criteria.getPageSize());
+        List<TopicSummaryDTO> pageList = topicDao.interestSummary(criteria.getUserId());
+        return DataConverter.page(pageList, TopicSummaryDTO.class);
+    }
+
+    @Override
+    public TopicSummaryDTO getSummary(Integer topicId) {
+        return topicDao.getSummary(topicId);
+    }
+
+    @Override
     public TopicDTO get(int id) {
         Topic topic = topicDao.findById(id);
         return DataConverter.map(topic, TopicDTO.class);
@@ -36,12 +58,8 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public TopicDTO add(String title, String notes, Integer userId) throws ServiceException {
-        if (title == null || StringUtils.isBlank(title)) {
-            throw new ServiceException("Fail to add topic: topic title can not be empty");
-        }
-
         if (topicDao.findByTitle(title) != null) {
-            throw new ServiceException("Fail to add topic: topic with same title exist");
+            throw new ServiceException("topic with same title exist");
         }
 
         Topic topic = new Topic();

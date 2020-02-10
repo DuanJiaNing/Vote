@@ -4,6 +4,7 @@ package com.duan.vote.service;
 import com.duan.service.Service;
 import com.duan.vote.dto.TopicCriteriaDTO;
 import com.duan.vote.dto.TopicDTO;
+import com.duan.vote.dto.TopicSummaryDTO;
 import com.duan.vote.exceptions.ServiceException;
 import com.github.pagehelper.PageInfo;
 
@@ -20,4 +21,9 @@ public interface TopicService extends Service<TopicDTO> {
 
     PageInfo<TopicDTO> simpleList(TopicCriteriaDTO criteria);
 
+    PageInfo<TopicSummaryDTO> listSummary(TopicCriteriaDTO criteria);
+
+    PageInfo<TopicSummaryDTO> listInterest(TopicCriteriaDTO criteria);
+
+    TopicSummaryDTO getSummary(Integer topicId);
 }

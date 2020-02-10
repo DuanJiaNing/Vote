@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.duan.vote.dao.CommentDao">
+
+    <sql id="allFields">id, user_id, topic_id, content, vote, insert_time</sql>
+
+    <select id="findById" resultType="com.duan.vote.entity.Comment">
+        SELECT
+        <include refid="allFields"/>
+        FROM comment
+        WHERE id = #{value}
+    </select>
+
+    <select id="summary" resultType="com.duan.vote.dto.CommentSummaryDTO">
+SELECT c.id AS comment_id, c.user_id, c.topic_id, c.content, c.vote, c.insert_time, cv.my_comment_vote, dcv.disagree_vote_count, acv.agree_vote_count
+FROM comment c
+LEFT JOIN (
+  SELECT vote AS my_comment_vote, comment_id
+  FROM comment_vote
+  WHERE user_id = #{myUserId}) cv
+  ON cv.comment_id = c.id
+LEFT JOIN (
+  SELECT comment_id, COUNT(*) AS disagree_vote_count
+  FROM comment_vote
+  WHERE vote = -1
+  GROUP BY comment_id) dcv
+  ON dcv.comment_id = c.id
+LEFT JOIN (
+  SELECT comment_id, COUNT(*) AS agree_vote_count
+  FROM comment_vote
+  WHERE vote = 1
+  GROUP BY comment_id) acv
+  ON acv.comment_id = c.id
+WHERE topic_id = #{topicId}
+ORDER BY insert_time DESC
+    </select>
+
+    <insert id="insert" parameterType="com.duan.vote.entity.Comment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO comment (user_id, topic_id, content, vote)
+            VALUE (#{userId}, #{topicId}, #{content}, #{vote})
+    </insert>
+
+</mapper>

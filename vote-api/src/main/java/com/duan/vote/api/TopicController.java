@@ -9,7 +9,6 @@ import com.duan.vote.dto.TopicSummaryDTO;
 import com.duan.vote.dto.UserDTO;
 import com.duan.vote.exceptions.ServiceException;
 import com.duan.vote.service.TopicService;
-import com.duan.vote.service.TopicStatsService;
 import com.duan.vote.service.UserService;
 import com.duan.vote.utils.ResultUtils;
 import com.github.pagehelper.PageInfo;
@@ -32,9 +31,6 @@ public class TopicController {
     @Reference
     private TopicService topicService;
 
-    @Reference
-    private TopicStatsService topicStatsService;
-
     @Autowired
     private Config config;
 
@@ -43,7 +39,7 @@ public class TopicController {
 
     @GetMapping("/{id}")
     public ResultModel<TopicSummaryDTO> get(@PathVariable Integer id) {
-        TopicSummaryDTO summary = topicStatsService.getSummary(id);
+        TopicSummaryDTO summary = topicService.getSummary(id);
         if (summary == null) {
             return ResultUtils.checked("主题不存在");
         }
@@ -63,7 +59,7 @@ public class TopicController {
         TopicCriteriaDTO criteria = newDefaultTopicCriteriaDTO(pageSize, pageNum);
         criteria.setUserId(user.getId());
         criteria.setKeyword(keyWord);
-        PageInfo<TopicSummaryDTO> page = topicStatsService.listInterest(criteria);
+        PageInfo<TopicSummaryDTO> page = topicService.listInterest(criteria);
         return ResultUtils.successPaged(page);
     }
 
@@ -79,7 +75,7 @@ public class TopicController {
         TopicCriteriaDTO criteria = newDefaultTopicCriteriaDTO(pageSize, pageNum);
         criteria.setUserId(user.getId());
         criteria.setKeyword(keyWord);
-        PageInfo<TopicSummaryDTO> page = topicStatsService.listSummary(criteria);
+        PageInfo<TopicSummaryDTO> page = topicService.listSummary(criteria);
         return ResultUtils.successPaged(page);
     }
 
@@ -89,7 +85,7 @@ public class TopicController {
                                                                 @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         TopicCriteriaDTO criteria = newDefaultTopicCriteriaDTO(pageSize, pageNum);
         criteria.setKeyword(keyWord);
-        PageInfo<TopicSummaryDTO> page = topicStatsService.listSummary(criteria);
+        PageInfo<TopicSummaryDTO> page = topicService.listSummary(criteria);
         return ResultUtils.successPaged(page);
     }
 
