@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.duan.vote.dao.CommentVoteDao">
+
+    <sql id="allFields">id, user_id, comment_id, vote, insert_time</sql>
+
+    <insert id="insert" parameterType="com.duan.vote.entity.CommentVote" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO comment_vote (user_id, comment_id, vote)
+            VALUE (#{userId}, #{commentId}, #{vote})
+    </insert>
+
+    <select id="findUserVote" resultType="com.duan.vote.entity.CommentVote">
+        SELECT
+        <include refid="allFields"/>
+        FROM comment_vote
+        WHERE user_id = #{userId} AND comment_id = #{commentId}
+    </select>
+
+</mapper>

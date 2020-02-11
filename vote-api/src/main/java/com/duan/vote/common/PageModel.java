@@ -1,6 +1,8 @@
 package com.duan.vote.common;
 
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -9,52 +11,13 @@ import java.util.List;
  *
  * @author DuanJiaNing
  */
+@Data
 public class PageModel<D> implements Serializable {
 
-    // TODO ser..uid
+    private static final long serialVersionUID = -8501352785957042449L;
     private int pageNum;
     private int pageSize;
     private long total;
     private int pages;
     private List<D> list;
-
-    public int getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(int pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public long getTotal() {
-        return total;
-    }
-
-    public void setTotal(long total) {
-        this.total = total;
-    }
-
-    public int getPages() {
-        return pages;
-    }
-
-    public void setPages(int pages) {
-        this.pages = pages;
-    }
-
-    public List<D> getList() {
-        return list;
-    }
-
-    public void setList(List<D> list) {
-        this.list = list;
-    }
 }

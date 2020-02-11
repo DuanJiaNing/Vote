@@ -15,7 +15,11 @@ public enum Vote {
         this.code = code;
     }
 
-    public static Vote valueOf(int code) {
+    public static Vote valueOf(Integer code) {
+        if (code == null) {
+            return null;
+        }
+
         for (Vote value : Vote.values()) {
             if (value.code == code) {
                 return value;

@@ -16,5 +16,7 @@ import java.util.List;
 @Repository
 public interface CommentDao extends BaseDao<Comment> {
 
-    List<CommentSummaryDTO> summary(@Param("myUserId") Integer myUserId, @Param("topicId") Integer topicId);
+    List<CommentSummaryDTO> listSummary(@Param("myUserId") Integer myUserId, @Param("topicId") Integer topicId);
+
+    CommentSummaryDTO getSummary(@Param("myUserId") Integer myUserId, @Param("commentId") Integer commentId);
 }

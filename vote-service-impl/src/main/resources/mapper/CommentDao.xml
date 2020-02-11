@@ -13,7 +13,7 @@
         WHERE id = #{value}
     </select>
 
-    <select id="summary" resultType="com.duan.vote.dto.CommentSummaryDTO">
+    <select id="listSummary" resultType="com.duan.vote.dto.CommentSummaryDTO">
 SELECT c.id AS comment_id, c.user_id, c.topic_id, c.content, c.vote, c.insert_time, cv.my_comment_vote, dcv.disagree_vote_count, acv.agree_vote_count
 FROM comment c
 LEFT JOIN (
@@ -35,6 +35,29 @@ LEFT JOIN (
   ON acv.comment_id = c.id
 WHERE topic_id = #{topicId}
 ORDER BY insert_time DESC
+    </select>
+
+    <select id="getSummary" resultType="com.duan.vote.dto.CommentSummaryDTO">
+SELECT c.id AS comment_id, c.user_id, c.topic_id, c.content, c.vote, c.insert_time, cv.my_comment_vote, dcv.disagree_vote_count, acv.agree_vote_count
+FROM comment c
+LEFT JOIN (
+  SELECT vote AS my_comment_vote, comment_id
+  FROM comment_vote
+  WHERE user_id = #{myUserId}) cv
+  ON cv.comment_id = c.id
+LEFT JOIN (
+  SELECT comment_id, COUNT(*) AS disagree_vote_count
+  FROM comment_vote
+  WHERE vote = -1
+  GROUP BY comment_id) dcv
+  ON dcv.comment_id = c.id
+LEFT JOIN (
+  SELECT comment_id, COUNT(*) AS agree_vote_count
+  FROM comment_vote
+  WHERE vote = 1
+  GROUP BY comment_id) acv
+  ON acv.comment_id = c.id
+WHERE c.id = #{commentId}
     </select>
 
     <insert id="insert" parameterType="com.duan.vote.entity.Comment" useGeneratedKeys="true" keyProperty="id">

@@ -20,4 +20,6 @@ public interface CommentService extends Service<CommentDTO> {
     CommentDTO add(String content, Integer topicId, Integer userId, Vote vote) throws ServiceException;
 
     PageInfo<CommentSummaryDTO> listSummary(CommentCriteriaDTO criteria);
+
+    CommentSummaryDTO vote(Integer userId, Integer commentId, Vote vote) throws ServiceException;
 }

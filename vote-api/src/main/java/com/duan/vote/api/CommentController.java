@@ -1,6 +1,6 @@
 package com.duan.vote.api;
 
-import com.duan.service.dto.PageCondition;
+import com.duan.vote.common.CommentVoteVo;
 import com.duan.vote.common.PageModel;
 import com.duan.vote.common.ResultModel;
 import com.duan.vote.config.Config;
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Created on 2019/10/25.
+ * Created on 2020/02/10.
  *
  * @author DuanJiaNing
  */
@@ -36,6 +36,24 @@ public class CommentController {
 
     @Autowired
     private Config config;
+
+    @PostMapping("/vote")
+    public ResultModel<CommentSummaryDTO> vote(@RequestBody CommentVoteVo vo, @RequestHeader("uid") String uid) {
+        UserDTO user = userService.getUserByUid(uid);
+        if (user == null) {
+            return ResultUtils.checked("用户不存在");
+        }
+
+        if (Vote.valueOf(vo.getVote()) == null) {
+            return ResultUtils.fail("invalid parameter value: vote=" + vo.getVote());
+        }
+
+        try {
+            return ResultUtils.success(commentService.vote(user.getId(), vo.getCommentId(), Vote.valueOf(vo.getVote())));
+        } catch (ServiceException e) {
+            return ResultUtils.fail(e);
+        }
+    }
 
     @GetMapping("/list")
     public ResultModel<PageModel<CommentSummaryDTO>> listComment(@RequestHeader("uid") String uid,
@@ -56,7 +74,7 @@ public class CommentController {
         return ResultUtils.successPaged(page);
     }
 
-    @PostMapping()
+    @PostMapping
     public ResultModel<CommentDTO> add(@RequestBody CommentDTO dto, @RequestHeader("uid") String uid) {
         UserDTO user = userService.getUserByUid(uid);
         if (user == null) {
