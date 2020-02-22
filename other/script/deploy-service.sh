@@ -10,7 +10,7 @@ do
 done
 echo "prepare to deploy $NAME ..."
 
-java -Xmx256m -jar /usr/duan/jenkins/vote/jar/vote-service-impl-1.0-SNAPSHOT.jar > /usr/duan/jenkins/vote/log/vote-service.log 2>&1 &
-java -Xmx256m -jar /usr/duan/vote/vote-service-impl-1.0-SNAPSHOT.jar > /usr/duan/vote/vote-service.log 2>&1 &
+nohup java -Xmx256m -jar /usr/duan/jenkins/vote/jar/vote-service-impl-1.0-SNAPSHOT.jar > /usr/duan/jenkins/vote/log/vote-service.log 2>&1 &
+nohup java -Xmx256m -jar /usr/duan/vote/vote-service-impl-1.0-SNAPSHOT.jar > /usr/duan/vote/vote-service.log 2>&1 &
 
 echo excute success from deploy-service.sh

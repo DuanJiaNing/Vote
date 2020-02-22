@@ -11,7 +11,7 @@ done
 echo "prepare to deploy $NAME after 10s..."
 
 sleep 10s
-java -Xmx256m -jar /usr/duan/jenkins/vote/jar/vote-api-1.0-SNAPSHOT.jar > /usr/duan/jenkins/vote/log/api.log 2>&1 &
-java -Xmx256m -jar /usr/duan/vote/vote-api-1.0-SNAPSHOT.jar > /usr/duan/vote/api.log 2>&1 &
+nohup java -Xmx256m -jar /usr/duan/jenkins/vote/jar/vote-api-1.0-SNAPSHOT.jar > /usr/duan/jenkins/vote/log/api.log 2>&1 &
+nohup java -Xmx256m -jar /usr/duan/vote/vote-api-1.0-SNAPSHOT.jar > /usr/duan/vote/api.log 2>&1 &
 
 echo excute success from deploy-api.sh
